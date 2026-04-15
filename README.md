@@ -1,2 +1,9 @@
-# Luna-and-Friends
-Luna &amp; Friends: Assistente Virtual focado em neurodiversidade e Edutech. Inspirado em widgets clássicos, o app auxilia nos estudos, combate a solidão e oferece suporte emocional e autoajuda. Uma solução segura, sem malware, desenhada para ser um companheiro digital e widget de produtividade para estudantes e profissionais. 🌙🌻💻
+Como interagir com a Luna:
+
+Clique Esquerdo: Abre o portal para falar com a Luna (Gemini).
+
+Clique Direito: A Luna pisca e te dá tchau! ✨
+
+Arrastar: Clique e segure com o botão esquerdo para mover ela pela tela.
+
+ESC: Fecha a assistente.
