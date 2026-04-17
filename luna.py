@@ -6,7 +6,7 @@ import webbrowser
 import os
 import winsound
 
-# --- CONFIGURAÇÕES DE ARQUIVOS (Foco: Sol e Luna) ---
+# --- CONFIGURAÇÕES DE ARQUIVOS ---
 ARQUIVO_CONFIG = "preferencia.txt"
 ARQUIVO_MUSICA = "Welcome to Outer Space.wav"
 ARQUIVO_BG = "Andressa com Sol e Luna.png"
@@ -17,7 +17,7 @@ ARQUIVO_ICON = "luna_icon.ico"
 
 musica_rodando = False
 
-# --- BANCOS DE FRASES (Autoajuda e Foco) ---
+# --- BANCOS DE FRASES ---
 lembretes_luna = [
     "Já houve ingestão de água hoje? 💧",
     "Momento de descansar os olhos um pouco. 👀",
@@ -38,7 +38,6 @@ def obter_saudacao():
     elif 12 <= hora < 18: return "Boa tarde!"
     else: return "Boa noite!"
 
-# --- FUNÇÕES DE CONFIGURAÇÃO ---
 def salvar_escolha(nome):
     try:
         with open(ARQUIVO_CONFIG, "w") as f:
@@ -106,19 +105,21 @@ class SolWidget(PersonagemWidget):
     def __init__(self, parent):
         super().__init__(parent, IMAGEM_SOL, lembretes_sol, tamanho_img=(350, 350), tamanho_janela="450x550")
 
-# --- MINI MENU DE SELEÇÃO ---
+# --- MINI MENU DE SELEÇÃO (BOTÕES AJUSTADOS) ---
 def seletor_anfitriao(parent):
     if parent.personagem_widget:
         parent.personagem_widget.win.destroy()
 
     seletor = tk.Toplevel(parent)
     seletor.overrideredirect(True) 
-    seletor.geometry("550x250+600+300")
-    
+    seletor.geometry("600x350+550+250")
+
     try:
-        img_ban = Image.open(ARQUIVO_BANNER_SELETOR).resize((550, 250), Image.Resampling.LANCZOS)
+        img_ban = Image.open(ARQUIVO_BANNER_SELETOR).resize((600, 350), Image.Resampling.LANCZOS)
         seletor.bg_img = ImageTk.PhotoImage(img_ban)
-        tk.Label(seletor, image=seletor.bg_img).place(x=0, y=0)
+        
+        bg_label = tk.Label(seletor, image=seletor.bg_img)
+        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
     except:
         seletor.config(bg="#0b0b1a")
 
@@ -128,9 +129,14 @@ def seletor_anfitriao(parent):
         else: parent.personagem_widget = SolWidget(parent)
         seletor.destroy()
 
-    # Sol na Esquerda, Luna na Direita, sem cobrir o rosto
-    tk.Button(seletor, text="☀️ Sol", command=lambda: select("Sol"), bg="#ffe082", width=12, font=("Arial", 10, "bold")).place(x=100, y=180)
-    tk.Button(seletor, text="🌙 Luna", command=lambda: select("Luna"), bg="#ffb6c1", width=12, font=("Arial", 10, "bold")).place(x=350, y=180)
+    # BOTÕES SUBIRAM UM POUCO (y=240)
+    # Luna na Esquerda
+    tk.Button(seletor, text="🌙 Luna", command=lambda: select("Luna"), 
+              bg="#ffb6c1", width=12, font=("Arial", 10, "bold")).place(x=100, y=240)
+    
+    # Sol na Direita
+    tk.Button(seletor, text="☀️ Sol", command=lambda: select("Sol"), 
+              bg="#ffe082", width=12, font=("Arial", 10, "bold")).place(x=370, y=240)
 
 # --- INTERFACE PRINCIPAL ---
 root = tk.Tk()
@@ -142,17 +148,14 @@ if os.path.exists(ARQUIVO_ICON):
     try: root.iconbitmap(ARQUIVO_ICON)
     except: pass
 
-# AJUSTE DE FUNDO: Preenchimento total para remover a mancha branca
 try:
     img_bg = Image.open(ARQUIVO_BG).resize((800, 600), Image.Resampling.LANCZOS)
     root.bg_img = ImageTk.PhotoImage(img_bg)
-    # Usando place(relwidth=1, relheight=1) para garantir que cubra TUDO
-    bg_label = tk.Label(root, image=root.bg_img)
-    bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+    bg_label_main = tk.Label(root, image=root.bg_img)
+    bg_label_main.place(x=0, y=0, relwidth=1, relheight=1)
 except:
     root.config(bg="#0b0b1a")
 
-# Título Principal (Sem estrelinha)
 tk.Label(root, text="Luna & Friends", bg="#0b0b1a", fg="#ff69b4", font=("Segoe UI", 30, "bold")).pack(pady=40)
 
 btn_style = {"font": ("Arial", 12, "bold"), "width": 25, "height": 2, "cursor": "hand2"}
@@ -173,15 +176,15 @@ def gerenciar_musica():
 btn_musica = tk.Button(root, text="🎵 Tocar Música", command=gerenciar_musica, bg="#98fb98", **btn_style)
 btn_musica.pack(pady=10)
 
-# Botão Roxo para Trocar Anfitrião
 tk.Button(root, text="🔄 Trocar Anfitrião", command=lambda: seletor_anfitriao(root), 
           bg="#9370DB", fg="white", **btn_style).pack(pady=10)
 
 tk.Button(root, text="❌ Sair", command=root.quit, bg="#ff4757", fg="white", **btn_style).pack(pady=10)
 
 root.personagem_widget = None
-ultimo = ler_escolha()
+root.salvar_escolha = salvar_escolha 
 
+ultimo = ler_escolha()
 if ultimo == "Luna": root.personagem_widget = LunaWidget(root)
 elif ultimo == "Sol": root.personagem_widget = SolWidget(root)
 else: seletor_anfitriao(root)
