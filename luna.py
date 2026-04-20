@@ -6,30 +6,49 @@ import webbrowser
 import os
 import winsound
 
+# --- IMPORTAÇÃO DO MÓDULO DE HISTÓRIA ---
+from cronicas import abrir_livro_azuzaria
+
 # --- CONFIGURAÇÕES DE ARQUIVOS ---
 ARQUIVO_CONFIG = "preferencia.txt"
-ARQUIVO_MUSICA = "Welcome to Outer Space.wav"
 ARQUIVO_BG = "Andressa com Sol e Luna.png"
 ARQUIVO_BANNER_SELETOR = "Banner Luna & Friends.png"
 IMAGEM_LUNA = "luna_estatica.png"
 IMAGEM_SOL = "sol_estatico.png"
 ARQUIVO_ICON = "luna_icon.ico"
 
+# --- PLAYLIST DE AZUZARIA ---
+PLAYLIST = {
+    "Bem-vindo ao Espaço Sideral": "Welcome to Outer Space.wav",
+    "O Despertar de Azuzaria": "O Despertar de Azuzaria.wav"
+}
+
 musica_rodando = False
 
-# --- BANCOS DE FRASES ---
+# --- BANCOS DE FRASES (NEUTRAS E INCLUSIVAS - FOCO NA PESSOA!) ---
 lembretes_luna = [
     "Já houve ingestão de água hoje? 💧",
     "Momento de descansar os olhos um pouco. 👀",
-    "Você é capaz de grandes coisas hoje. 🌌",
-    "Respire fundo e mantenha o foco. 🧘"
+    "Pessoas incríveis fazem coisas grandes. E você é uma delas! 🌌",
+    "Respire fundo e mantenha o foco na sua jornada. 🧘",
+    "Até as estrelas precisam da escuridão para poder brilhar. ✨",
+    "A criatividade é a força que move Azuzaria! 🚀",
+    "Sua presença ilumina todo o Reino de Azuzaria. 🌙",
+    "Não se esqueça: quem constrói o futuro é quem acredita nele. 💎",
+    "Sinta a energia do cosmos te abraçar agora. 🌌",
+    "Cada passo conta. Respeite o seu tempo. ⏳"
 ]
 
 lembretes_sol = [
-    "Sua mente está afiada e pronta para vencer! 🧠✨",
-    "O sucesso é construído com consistência! 🧱",
-    "Concentre-se no processo, o resultado virá! ⏳🎯",
-    "Sua energia ilumina sua produtividade! ☀️"
+    "A mente está afiada e em prontidão para vencer! 🧠✨",
+    "O sucesso é construído com consistência e paciência! 🧱",
+    "Foco total no processo, o resultado virá! ⏳🎯",
+    "Sua determinação ilumina até o vazio de Boötes! ☀️",
+    "Sinta orgulho da força que existe dentro do seu ser! 🦁",
+    "Luz própria é capaz de dissipar qualquer sombra de dúvida. ☀️",
+    "Erros são apenas debugs no caminho da evolução! 💻🔥",
+    "Brilhe sem medo, o universo precisa dessa clareza. 🌟",
+    "Hoje é um dia perfeito para explorar novas galáxias! 🏆"
 ]
 
 def obter_saudacao():
@@ -105,7 +124,7 @@ class SolWidget(PersonagemWidget):
     def __init__(self, parent):
         super().__init__(parent, IMAGEM_SOL, lembretes_sol, tamanho_img=(350, 350), tamanho_janela="450x550")
 
-# --- MINI MENU DE SELEÇÃO (BOTÕES AJUSTADOS) ---
+# --- MINI MENU DE SELEÇÃO ---
 def seletor_anfitriao(parent):
     if parent.personagem_widget:
         parent.personagem_widget.win.destroy()
@@ -117,7 +136,6 @@ def seletor_anfitriao(parent):
     try:
         img_ban = Image.open(ARQUIVO_BANNER_SELETOR).resize((600, 350), Image.Resampling.LANCZOS)
         seletor.bg_img = ImageTk.PhotoImage(img_ban)
-        
         bg_label = tk.Label(seletor, image=seletor.bg_img)
         bg_label.place(x=0, y=0, relwidth=1, relheight=1)
     except:
@@ -129,19 +147,16 @@ def seletor_anfitriao(parent):
         else: parent.personagem_widget = SolWidget(parent)
         seletor.destroy()
 
-    # BOTÕES SUBIRAM UM POUCO (y=240)
-    # Luna na Esquerda
     tk.Button(seletor, text="🌙 Luna", command=lambda: select("Luna"), 
               bg="#ffb6c1", width=12, font=("Arial", 10, "bold")).place(x=100, y=240)
     
-    # Sol na Direita
     tk.Button(seletor, text="☀️ Sol", command=lambda: select("Sol"), 
               bg="#ffe082", width=12, font=("Arial", 10, "bold")).place(x=370, y=240)
 
 # --- INTERFACE PRINCIPAL ---
 root = tk.Tk()
 root.title("Luna & Friends")
-root.geometry("800x600")
+root.geometry("800x650") 
 root.resizable(False, False)
 
 if os.path.exists(ARQUIVO_ICON):
@@ -149,37 +164,53 @@ if os.path.exists(ARQUIVO_ICON):
     except: pass
 
 try:
-    img_bg = Image.open(ARQUIVO_BG).resize((800, 600), Image.Resampling.LANCZOS)
+    img_bg = Image.open(ARQUIVO_BG).resize((800, 650), Image.Resampling.LANCZOS)
     root.bg_img = ImageTk.PhotoImage(img_bg)
     bg_label_main = tk.Label(root, image=root.bg_img)
     bg_label_main.place(x=0, y=0, relwidth=1, relheight=1)
 except:
     root.config(bg="#0b0b1a")
 
-tk.Label(root, text="Luna & Friends", bg="#0b0b1a", fg="#ff69b4", font=("Segoe UI", 30, "bold")).pack(pady=40)
+tk.Label(root, text="Luna & Friends", bg="#0b0b1a", fg="#ff69b4", font=("Segoe UI", 30, "bold")).pack(pady=30)
 
 btn_style = {"font": ("Arial", 12, "bold"), "width": 25, "height": 2, "cursor": "hand2"}
 
-tk.Button(root, text="🚀 Abrir Gemini", command=lambda: webbrowser.open("https://gemini.google.com"), bg="#ffb6c1", **btn_style).pack(pady=10)
+tk.Button(root, text="🚀 Abrir Gemini", command=lambda: webbrowser.open("https://gemini.google.com"), bg="#ffb6c1", **btn_style).pack(pady=8)
 
+# --- SISTEMA DE PLAYLIST ---
 def gerenciar_musica():
     global musica_rodando
     if not musica_rodando:
-        winsound.PlaySound(ARQUIVO_MUSICA, winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_LOOP)
-        btn_musica.config(text="🔇 Parar Música", bg="#ffeb3b")
-        musica_rodando = True
+        menu_playlist = tk.Menu(root, tearoff=0, font=("Arial", 10, "bold"))
+        
+        def tocar(nome_musica):
+            global musica_rodando
+            winsound.PlaySound(PLAYLIST[nome_musica], winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_LOOP)
+            btn_musica.config(text="🔇 Parar Música", bg="#ffeb3b")
+            musica_rodando = True
+
+        for nome in PLAYLIST.keys():
+            menu_playlist.add_command(label=f"🎵 {nome}", command=lambda n=nome: tocar(n))
+        
+        # Abre o menu logo acima do botão
+        x = btn_musica.winfo_rootx()
+        y = btn_musica.winfo_rooty() - 80
+        menu_playlist.post(x, y)
     else:
         winsound.PlaySound(None, winsound.SND_PURGE)
-        btn_musica.config(text="🎵 Tocar Música", bg="#98fb98")
+        btn_musica.config(text="🎵 Playlist Música", bg="#98fb98")
         musica_rodando = False
 
-btn_musica = tk.Button(root, text="🎵 Tocar Música", command=gerenciar_musica, bg="#98fb98", **btn_style)
-btn_musica.pack(pady=10)
+btn_musica = tk.Button(root, text="🎵 Playlist Música", command=gerenciar_musica, bg="#98fb98", **btn_style)
+btn_musica.pack(pady=8)
 
 tk.Button(root, text="🔄 Trocar Anfitrião", command=lambda: seletor_anfitriao(root), 
-          bg="#9370DB", fg="white", **btn_style).pack(pady=10)
+          bg="#9370DB", fg="white", **btn_style).pack(pady=8)
 
-tk.Button(root, text="❌ Sair", command=root.quit, bg="#ff4757", fg="white", **btn_style).pack(pady=10)
+tk.Button(root, text="📖 História de Azuzaria", command=abrir_livro_azuzaria, 
+          bg="#4b0082", fg="white", **btn_style).pack(pady=8)
+
+tk.Button(root, text="❌ Sair", command=root.quit, bg="#ff4757", fg="white", **btn_style).pack(pady=8)
 
 root.personagem_widget = None
 root.salvar_escolha = salvar_escolha 
