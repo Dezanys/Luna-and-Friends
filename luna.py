@@ -8,6 +8,7 @@ import winsound
 
 # --- IMPORTAÇÃO DO MÓDULO DE HISTÓRIA ---
 from cronicas import abrir_livro_azuzaria
+from cronicas2 import abrir_livro_andy
 
 # --- CONFIGURAÇÕES DE ARQUIVOS ---
 ARQUIVO_CONFIG = "preferencia.txt"
@@ -20,7 +21,8 @@ ARQUIVO_ICON = "luna_icon.ico"
 # --- PLAYLIST DE AZUZARIA ---
 PLAYLIST = {
     "Bem-vindo ao Espaço Sideral": "Welcome to Outer Space.wav",
-    "O Despertar de Azuzaria": "O Despertar de Azuzaria.wav"
+    "O Despertar de Azuzaria": "O Despertar de Azuzaria.wav",
+    "Salvando Andy": "Salvando Andy.wav"
 }
 
 musica_rodando = False
@@ -192,7 +194,6 @@ def gerenciar_musica():
         for nome in PLAYLIST.keys():
             menu_playlist.add_command(label=f"🎵 {nome}", command=lambda n=nome: tocar(n))
         
-        # Abre o menu logo acima do botão
         x = btn_musica.winfo_rootx()
         y = btn_musica.winfo_rooty() - 80
         menu_playlist.post(x, y)
@@ -204,11 +205,26 @@ def gerenciar_musica():
 btn_musica = tk.Button(root, text="🎵 Playlist Música", command=gerenciar_musica, bg="#98fb98", **btn_style)
 btn_musica.pack(pady=8)
 
+# --- SISTEMA DE HISTÓRIA ---
+def gerenciar_historia():
+    menu_historia = tk.Menu(root, tearoff=0, font=("Arial", 10, "bold"))
+    
+    # Volume 1 chamando a função existente
+    menu_historia.add_command(label="📖 Volume 1: O Despertar de Azuzaria", command=abrir_livro_azuzaria)
+    
+    # Volume 2
+    menu_historia.add_command(label="📖 Volume 2: Salvando Andy", command=abrir_livro_andy)
+
+    x = btn_historia.winfo_rootx()
+    y = btn_historia.winfo_rooty() - 80
+    menu_historia.post(x, y)
+
 tk.Button(root, text="🔄 Trocar Anfitrião", command=lambda: seletor_anfitriao(root), 
           bg="#9370DB", fg="white", **btn_style).pack(pady=8)
 
-tk.Button(root, text="📖 História de Azuzaria", command=abrir_livro_azuzaria, 
-          bg="#4b0082", fg="white", **btn_style).pack(pady=8)
+btn_historia = tk.Button(root, text="📖 História de Azuzaria", command=gerenciar_historia, 
+          bg="#4b0082", fg="white", **btn_style)
+btn_historia.pack(pady=8)
 
 tk.Button(root, text="❌ Sair", command=root.quit, bg="#ff4757", fg="white", **btn_style).pack(pady=8)
 
