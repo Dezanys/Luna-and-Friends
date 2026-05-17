@@ -11,6 +11,8 @@ import re
 import math 
 import time
 import traceback
+import subprocess  # Importado com segurança para abrir o jogo paralelo
+import sys
 
 # =============================================================================
 # --- BLOCO 1: INFRAESTRUTURA E CONFIGURAÇÕES NATIVAS ---
@@ -24,13 +26,25 @@ ARQUIVO_ICONE_AZUZARIA = "luna_icon.ico"
 IMAGEM_LUNA_BASE = "luna_estatica.png"
 IMAGEM_SOL_BASE = "sol_estatico.png"
 
+# --- ADICIONADA A TRILHA EMOCIONANTE DE CALISTO SEM ALTERAR NENHUMA CONFIGURAÇÃO ---
 PLAYLIST_AZUZARIA = {
     "Bem-vindo ao Espaço Sideral": "Welcome to Outer Space.wav", 
     "O Despertar de Azuzaria": "O Despertar de Azuzaria.wav", 
-    "Salvando Andy": "Salvando Andy.wav"
+    "Salvando Andy": "Salvando Andy.wav",
+    "Calisto, o Guardião": "Calisto, o Guardião.wav"
 }
 
-# --- FUNÇÕES PARA ABRIR AS CRÔNICAS SEM TRAVA DE CACHE ---
+# --- FUNÇÃO PARA ABRIR O MINI-GAME ARCADE ---
+def chamar_modulo_arcade():
+    try:
+        if os.path.exists("Luna_Run.py"):
+            subprocess.Popen([sys.executable, "Luna_Run.py"])
+        else:
+            messagebox.showwarning("Módulo Arcade", "O arquivo 'Luna_Run.py' não foi encontrado na pasta do projeto!")
+    except Exception as e:
+        messagebox.showerror("Erro no Arcade", f"Não foi possível iniciar o mini-game.\nErro: {str(e)}")
+
+# --- FUNÇÕES PARA ABRIR AS CRÔNICAS ---
 def chamar_capitulo_1():
     try:
         import cronicas
@@ -101,7 +115,7 @@ def processar_ia_azuzaria(obj_personagem):
             return
         except: pass
 
-    # 2. ESCUDO CVV EXPANDIDO (PREVENÇÃO ABSOLUTA)
+    # 2. ESCUDO CVV EXPANDIDO
     GATILHOS_CVV = [
         "suicidio", "suicídio", "me matar", "morrer", "morte", "desistir", 
         "tirar minha vida", "fim da minha vida", "quero morrer", "autoextermínio", 
@@ -116,12 +130,12 @@ def processar_ia_azuzaria(obj_personagem):
         animar_fala_personagem(obj_personagem)
         return
 
-    # 3. BANCO DE CONHECIMENTO E ENCICLOPÉDIA DE ASTRONOMIA
+    # 3. BANCO DE CONHECIMENTO
     msg = ""
     if "tdah" in pergunta:
         msg = "O TDAH afeta o foco e a intensidade, mas a mente hiperfocada é cheia de conexões geniais. A criatividade é um superpoder!"
     elif "autismo" in pergunta or "tea" in pergunta:
-        msg = "O Autismo é uma forma única, profunda e linda de processar o mundo. Viva a neurodiversidade e a riqueza de cada detalhe!"
+        msg = "O Autismo é uma forma única, profunda e linda de processar o mundo. Viva a neurodiversidade and a riqueza de cada detalhe!"
     elif "historia" in pergunta or "história" in pergunta:
         msg = "A História estuda as ações humanas através do tempo. Compreender o passado é a chave para iluminar e transformar o futuro!"
     elif "portugues" in pergunta or "português" in pergunta:
@@ -136,7 +150,7 @@ def processar_ia_azuzaria(obj_personagem):
     elif "venus" in pergunta or "vênus" in pergunta:
         msg = "Vênus é conhecido como o planeta irmão da Terra devido ao tamanho, mas é o lugar mais hostil do Sistema Solar! Sua atmosfera densa prende o calor em um efeito estufa devastador, tornando-o mais quente que Mercúrio. Ele brilha tanto no céu que foi apelidado de Estrela d'Alva. 🪐"
     elif "terra" in pergunta:
-        msg = "A Terra é o nosso lar, o terceiro planeta a partir do Sol e o único lugar conhecido no universo que abriga vida! Coberta por 70% de água líquida e protegida por uma atmosfera perfeita, ela é a nossa joia azul preciosa no cosmos. 🌍"
+        msg = "A Terra é o nosso lar, o terceiro planeta a partir do Sol e o único lugar conhecido no universo que abriga vida! Coberta por 70% de água líquida e protegida por uma atmosfera perfeita, ela é a nossa joia azul precoce no cosmos. 🌍"
     elif "marte" in pergunta:
         msg = "Marte é o famoso Planeta Vermelho! Ele tem essa cor por causa do óxido de ferro (ferrugem) em seu solo. Abriga o Monte Olimpo, o maior vulcão do Sistema Solar, e hoje é o principal destino de exploração das nossas sondas e robôs em busca de água antiga. 🔴"
     elif "jupiter" in pergunta or "júpiter" in pergunta:
@@ -202,7 +216,7 @@ FRASES_MOTIVACIONAIS = [
 class WidgetAzuzaria:
     def __init__(self, master, img_path, nome, txt_btn, size=(250, 250)):
         self.nome, self.tamanho_img = nome, size
-        self.off_x, self.off_y = 0, 0  # Inicialização preventiva antiautocrash do drag
+        self.off_x, self.off_y = 0, 0  
         self.win = tk.Toplevel(master)
         self.win.overrideredirect(True); self.win.attributes("-topmost", True)
         self.win.attributes("-transparentcolor", "white"); self.win.geometry("350x800+950+50")
@@ -247,7 +261,6 @@ def escolher_anfitriao(root_ref):
     tk.Button(sel, text="☀️ Sol", command=lambda: set_p("Sol"), bg="#ffe082", width=12, font=("Arial", 10, "bold")).place(x=370, y=240)
 
 root = tk.Tk(); root.title("Luna & Friends"); root.geometry("800x650")
-# --- TRAVA DE MAXIMIZAR ADICIONADA CONFORME DIRETRIZ ---
 root.resizable(False, False)
 
 if os.path.exists(ARQUIVO_ICONE_AZUZARIA): root.iconbitmap(ARQUIVO_ICONE_AZUZARIA)
@@ -279,6 +292,10 @@ def abrir_cronicas_menu():
     m.post(root.winfo_pointerx(), root.winfo_pointery())
 
 tk.Button(root, text="📖 Crônicas de Azuzaria", command=abrir_cronicas_menu, bg="#4b0082", fg="white", **ESTILO).pack(pady=7)
+
+# --- MÓDULO ARCADE ENCAIXADO PERFEITAMENTE ---
+tk.Button(root, text="👾 Módulo Arcade", command=chamar_modulo_arcade, bg="#20b2aa", fg="white", **ESTILO).pack(pady=7)
+
 tk.Button(root, text="🔄 Trocar Personagem", command=lambda: escolher_anfitriao(root), bg="#9370DB", fg="white", **ESTILO).pack(pady=7)
 tk.Button(root, text="❌ Sair", command=root.quit, bg="#ff4757", fg="white", **ESTILO).pack(pady=7)
 
